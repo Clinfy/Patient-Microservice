@@ -25,4 +25,7 @@ export class CoverageProviderEntity extends BaseEntity {
 
   @UpdateDateColumn()
   updated_at: Date;
+
+  @Column('jsonb', { nullable: true })
+  updated_by: AuthUser | null;
 }
