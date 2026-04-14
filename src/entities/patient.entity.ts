@@ -12,6 +12,7 @@ import {
 import type { AuthUser } from 'src/clients/auth/auth.interface';
 import { PatientCoverageEntity } from 'src/entities/patient-coverage.entity';
 import { PatientAdministrativeNoteEntity } from 'src/entities/patient-admin-note.entity';
+import { PatientRelatedContactEntity } from 'src/entities/patient-related-contact.entity';
 
 @Unique('UQ_patient_person_id', ['person_id'])
 @Unique('UQ_patient_medical_record_number', ['medical_record_number'])
@@ -33,6 +34,9 @@ export class PatientEntity extends BaseEntity {
 
   @OneToMany(() => PatientCoverageEntity, (coverage) => coverage.patient)
   coverages: PatientCoverageEntity[];
+
+  @OneToMany(() => PatientRelatedContactEntity, (contacts) => contacts.patient)
+  related_contacts: PatientRelatedContactEntity[];
 
   @OneToMany(() => PatientAdministrativeNoteEntity, (notes) => notes.patient)
   administrative_notes: PatientAdministrativeNoteEntity[];
