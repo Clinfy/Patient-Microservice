@@ -10,7 +10,7 @@ import {
 } from 'typeorm';
 import { PatientEntity } from 'src/entities/patient.entity';
 import { RelationshipType } from 'src/interfaces/enums/relationship.enum';
-import type { AuthUser } from 'src/clients/auth/auth.interface';
+import type { AuthUser } from 'src/clients/auth/auth-client.interface';
 
 @Entity('patient_related_contact')
 export class PatientRelatedContactEntity extends BaseEntity {

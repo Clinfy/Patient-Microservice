@@ -9,7 +9,7 @@ import {
   Unique,
   UpdateDateColumn,
 } from 'typeorm';
-import type { AuthUser } from 'src/clients/auth/auth.interface';
+import type { AuthUser } from 'src/clients/auth/auth-client.interface';
 import { PatientCoverageEntity } from 'src/entities/patient-coverage.entity';
 import { PatientAdministrativeNoteEntity } from 'src/entities/patient-admin-note.entity';
 import { PatientRelatedContactEntity } from 'src/entities/patient-related-contact.entity';

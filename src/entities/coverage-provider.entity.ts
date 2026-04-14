@@ -1,6 +1,6 @@
 import { BaseEntity, Column, CreateDateColumn, Entity, OneToMany, PrimaryColumn, Unique, UpdateDateColumn } from 'typeorm';
 import { ProviderPlanEntity } from 'src/entities/provider-plan.entity';
-import type { AuthUser } from 'src/clients/auth/auth.interface';
+import type { AuthUser } from 'src/clients/auth/auth-client.interface';
 import { PatientCoverageEntity } from 'src/entities/patient-coverage.entity';
 
 @Unique('UQ_coverage_provider_provider_name', ['provider_name'])

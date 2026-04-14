@@ -9,7 +9,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { PatientEntity } from 'src/entities/patient.entity';
-import type { AuthUser } from 'src/clients/auth/auth.interface';
+import type { AuthUser } from 'src/clients/auth/auth-client.interface';
 
 export enum CategoryType {
   GENERAL = 'GENERAL',

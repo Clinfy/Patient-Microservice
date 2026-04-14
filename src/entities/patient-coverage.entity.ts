@@ -8,7 +8,7 @@ import {
   PrimaryColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import type { AuthUser } from 'src/clients/auth/auth.interface';
+import type { AuthUser } from 'src/clients/auth/auth-client.interface';
 import { PatientEntity } from 'src/entities/patient.entity';
 import { CoverageProviderEntity } from 'src/entities/coverage-provider.entity';
 import { ProviderPlanEntity } from 'src/entities/provider-plan.entity';
