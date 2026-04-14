@@ -1,9 +1,12 @@
 export enum RelationshipType {
-  HOLDER = 'HOLDER',
   SON = 'SON',
   DAUGHTER = 'DAUGHTER',
   MOTHER = 'MOTHER',
   FATHER = 'FATHER',
+  SIBLING = 'SIBLING',
   SPOUSE = 'SPOUSE',
+  TUTOR = 'TUTOR',
+  CAREGIVER = 'CAREGIVER',
+  LEGAL_GUARDIAN = 'LEGAL_GUARDIAN',
   OTHER = 'OTHER',
 }
