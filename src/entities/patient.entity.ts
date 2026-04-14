@@ -11,6 +11,7 @@ import {
 } from 'typeorm';
 import type { AuthUser } from 'src/clients/auth/auth.interface';
 import { PatientCoverageEntity } from 'src/entities/patient-coverage.entity';
+import { PatientAdministrativeNoteEntity } from 'src/entities/patient-admin-note.entity';
 
 @Unique('UQ_patient_person_id', ['person_id'])
 @Unique('UQ_patient_medical_record_number', ['medical_record_number'])
@@ -32,6 +33,9 @@ export class PatientEntity extends BaseEntity {
 
   @OneToMany(() => PatientCoverageEntity, (coverage) => coverage.patient)
   coverages: PatientCoverageEntity[];
+
+  @OneToMany(() => PatientAdministrativeNoteEntity, (notes) => notes.patient)
+  administrative_notes: PatientAdministrativeNoteEntity[];
 
   @CreateDateColumn()
   created_at: Date;
