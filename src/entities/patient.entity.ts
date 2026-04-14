@@ -1,5 +1,16 @@
-import { BaseEntity, Column, CreateDateColumn, Entity, Index, PrimaryColumn, Unique, UpdateDateColumn } from 'typeorm';
+import {
+  BaseEntity,
+  Column,
+  CreateDateColumn,
+  Entity,
+  Index,
+  OneToMany,
+  PrimaryColumn,
+  Unique,
+  UpdateDateColumn,
+} from 'typeorm';
 import type { AuthUser } from 'src/clients/auth/auth.interface';
+import { PatientCoverageEntity } from 'src/entities/patient-coverage.entity';
 
 @Unique('UQ_patient_person_id', ['person_id'])
 @Unique('UQ_patient_medical_record_number', ['medical_record_number'])
@@ -18,6 +29,9 @@ export class PatientEntity extends BaseEntity {
 
   @Column({ default: true })
   is_active: boolean;
+
+  @OneToMany(() => PatientCoverageEntity, (coverage) => coverage.patient)
+  coverages: PatientCoverageEntity[];
 
   @CreateDateColumn()
   created_at: Date;
