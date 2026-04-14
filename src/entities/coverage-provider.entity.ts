@@ -1,6 +1,7 @@
 import { BaseEntity, Column, CreateDateColumn, Entity, OneToMany, PrimaryColumn, Unique, UpdateDateColumn } from 'typeorm';
 import { ProviderPlanEntity } from 'src/entities/provider-plan.entity';
 import type { AuthUser } from 'src/clients/auth/auth.interface';
+import { PatientCoverageEntity } from 'src/entities/patient-coverage.entity';
 
 @Unique('UQ_coverage_provider_provider_name', ['provider_name'])
 @Entity('coverage_provider')
@@ -13,6 +14,9 @@ export class CoverageProviderEntity extends BaseEntity {
 
   @OneToMany(() => ProviderPlanEntity, (plan) => plan.coverage_provider)
   provider_plans: ProviderPlanEntity[];
+
+  @OneToMany(() => PatientCoverageEntity, (coverage) => coverage.coverage_provider)
+  patient_coverages: PatientCoverageEntity[];
 
   @Column({ default: true })
   is_active: boolean;
