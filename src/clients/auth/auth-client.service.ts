@@ -12,7 +12,7 @@ export class AuthClientService {
   constructor(private readonly configService: ConfigService) {}
 
   async canDo(permission: string, token: string, request: Request): Promise<boolean> {
-    const authApi = await this.axiosAuthApi(request);
+    const authApi = this.axiosAuthApi(request);
     const response = await authApi.get<boolean>(`/users/can-do/${permission}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
@@ -21,7 +21,7 @@ export class AuthClientService {
   }
 
   async getMe(request: Request): Promise<AuthUser> {
-    const authApi = await this.axiosAuthApi(request);
+    const authApi = this.axiosAuthApi(request);
     const token = extractAuthToken(request);
     const response = await authApi.get<AuthUser>('/users/me', {
       headers: { Authorization: `Bearer ${token}` },
@@ -31,14 +31,14 @@ export class AuthClientService {
   }
 
   async getEndpointPermissions(key: string, request: Request): Promise<string[]> {
-    const authApi = await this.axiosAuthApi(request);
+    const authApi = this.axiosAuthApi(request);
     const response = await authApi.get<string[]>(`/endpoint-permission-rules/get-endpoint-permissions/${key}`);
 
     return response.data;
   }
 
   async apiKeyCanDo(permission: string, apiKey: string, request: Request): Promise<boolean> {
-    const authApi = await this.axiosAuthApi(request);
+    const authApi = this.axiosAuthApi(request);
     const response = await authApi.get<boolean>(`/api-keys/can-do/${permission}`, {
       headers: { 'x-api-key': apiKey },
     });
@@ -46,7 +46,7 @@ export class AuthClientService {
     return response.data;
   }
 
-  private async axiosAuthApi(request: Request) {
+  private axiosAuthApi(request: Request) {
     const baseUrl = this.configService.get<string>('AUTH_SERVICE_URL');
     const apiKey = this.configService.get<string>('AUTH_SERVICE_API_KEY');
 
@@ -56,12 +56,12 @@ export class AuthClientService {
     });
 
     authApi.interceptors.request.use(
-      async (config) => {
+      (config) => {
         if (!config.headers['x-api-key']) config.headers['x-api-key'] = apiKey;
         config.headers['content-type'] = 'application/json';
-        config.headers['x-forwarded-for'] = getClientIp(request);
-        config.headers['x-real-ip'] = getClientIp(request);
-        config.headers['user-agent'] = request.headers['user-agent'] || '';
+        if (config.headers['x-forwarded-for']) config.headers['x-forwarded-for'] = getClientIp(request);
+        if (config.headers['x-real-ip']) config.headers['x-real-ip'] = getClientIp(request);
+        if (config.headers['user-agent']) config.headers['user-agent'] = request.headers['user-agent'] || '';
         return config;
       },
       (error) => propagateAxiosError(error),
