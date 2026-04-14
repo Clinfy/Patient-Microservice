@@ -71,7 +71,7 @@ export class PatientCoverageEntity extends BaseEntity {
   @Column({ type: 'date', nullable: true })
   valid_until: string | null;
 
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', nullable: true, length: 250 })
   notes: string | null;
 
   @Column({ type: 'enum', enum: AffiliateType, nullable: false })

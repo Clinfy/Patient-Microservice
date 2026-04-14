@@ -24,7 +24,7 @@ export class ProviderPlanEntity extends BaseEntity {
   @Column()
   plan_name: string;
 
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   plan_code: string | null;
 
   @Column({ default: true })

@@ -34,7 +34,7 @@ export class PatientRelatedContactEntity extends BaseEntity {
   @Column()
   phone: string;
 
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   email: string | null;
 
   @Column({ type: 'enum', enum: RelationshipType })
