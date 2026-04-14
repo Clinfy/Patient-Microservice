@@ -5,12 +5,14 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryColumn,
   Unique,
   UpdateDateColumn,
 } from 'typeorm';
 import type { AuthUser } from 'src/clients/auth/auth.interface';
 import { CoverageProviderEntity } from 'src/entities/coverage-provider.entity';
+import { PatientCoverageEntity } from 'src/entities/patient-coverage.entity';
 
 @Unique('UQ_provider_plan_name', ['coverage_provider_id', 'plan_name'])
 @Unique('UQ_provider_plan_code', ['coverage_provider_id', 'plan_code'])
@@ -38,6 +40,9 @@ export class ProviderPlanEntity extends BaseEntity {
   })
   @JoinColumn({ name: 'coverage_provider_id' })
   coverage_provider: CoverageProviderEntity;
+
+  @OneToMany(() => PatientCoverageEntity, (coverage) => coverage.provider_plan)
+  patient_coverages: PatientCoverageEntity[];
 
   @CreateDateColumn()
   created_at: Date;
