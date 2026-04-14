@@ -5,6 +5,12 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ENTITIES } from 'src/entities';
 import { validate } from 'src/config/env-validation';
+import winston from 'winston';
+import DailyRotateFile from 'winston-daily-rotate-file';
+import { WinstonModule } from 'nest-winston';
+import { AuthClientModule } from 'src/clients/auth/auth-client.module';
+import { RequestContextModule } from 'src/common/context/request-context.module';
+import { AllExceptionsFilter } from 'src/common/filters/all-exceptions.filter';
 
 @Module({
   imports: [
@@ -25,8 +31,38 @@ import { validate } from 'src/config/env-validation';
         synchronize: true,
       }),
     }),
+
+    //Winston Logger Module
+    WinstonModule.forRoot({
+      level: 'info',
+      format: winston.format.combine(
+        winston.format.timestamp(),
+        winston.format.errors({ stack: true }),
+        winston.format.json(),
+      ),
+      transports: [
+        //new winston.transports.Console(),
+        new DailyRotateFile({
+          filename: 'logs/error-%DATE%.log',
+          datePattern: 'YYYY-MM-DD',
+          level: 'error',
+          maxSize: '5m',
+          maxFiles: '14d',
+        }),
+        new DailyRotateFile({
+          filename: 'logs/combined-%DATE%.log',
+          datePattern: 'YYYY-MM-DD',
+          maxSize: '10m',
+          maxFiles: '30d',
+        }),
+      ],
+    }),
+
+    TypeOrmModule.forFeature(ENTITIES),
+    AuthClientModule,
+    RequestContextModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, AllExceptionsFilter],
 })
 export class AppModule {}
