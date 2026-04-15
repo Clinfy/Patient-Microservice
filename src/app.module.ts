@@ -11,6 +11,9 @@ import { WinstonModule } from 'nest-winston';
 import { AuthClientModule } from 'src/clients/auth/auth-client.module';
 import { RequestContextModule } from 'src/common/context/request-context.module';
 import { AllExceptionsFilter } from 'src/common/filters/all-exceptions.filter';
+import { ObservabilityModule } from 'src/observability/observability.module';
+import { AuthGuard } from 'src/common/guards/auth.guard';
+import { ApiKeyGuard } from 'src/common/guards/api-key.guard';
 
 @Module({
   imports: [
@@ -61,8 +64,9 @@ import { AllExceptionsFilter } from 'src/common/filters/all-exceptions.filter';
     TypeOrmModule.forFeature(ENTITIES),
     AuthClientModule,
     RequestContextModule,
+    ObservabilityModule,
   ],
   controllers: [AppController],
-  providers: [AppService, AllExceptionsFilter],
+  providers: [AppService, AllExceptionsFilter, AuthGuard, ApiKeyGuard],
 })
 export class AppModule {}
