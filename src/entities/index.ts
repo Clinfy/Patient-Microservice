@@ -4,6 +4,7 @@ import { PatientAdministrativeNoteEntity } from 'src/entities/patient-admin-note
 import { PatientCoverageEntity } from 'src/entities/patient-coverage.entity';
 import { PatientRelatedContactEntity } from 'src/entities/patient-related-contact.entity';
 import { ProviderPlanEntity } from 'src/entities/provider-plan.entity';
+import { OutboxEntity } from 'src/entities/outbox.entity';
 
 export const ENTITIES = [
   CoverageProviderEntity,
@@ -12,4 +13,5 @@ export const ENTITIES = [
   PatientCoverageEntity,
   PatientRelatedContactEntity,
   ProviderPlanEntity,
+  OutboxEntity,
 ];
