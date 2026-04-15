@@ -1,5 +1,5 @@
 import { Request } from 'express';
-import { UnauthorizedException } from '@nestjs/common';
+import { AuthErrorCodes, AuthException } from 'src/common/guards/auth.exception';
 
 export function extractAuthToken(request: Request): string {
   const cookies = request.cookies as Record<string, string | undefined>;
@@ -11,5 +11,9 @@ export function extractAuthToken(request: Request): string {
     return authorization.slice(7);
   }
 
-  throw new UnauthorizedException('Authentication cookie is missing, expired, or invalid.');
+  throw new AuthException(
+    'Authentication cookie is missing, expired, or invalid.',
+    AuthErrorCodes.AUTH_COOKIE_EXPIRED_INVALID,
+    401,
+  );
 }
