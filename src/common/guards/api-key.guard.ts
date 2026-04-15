@@ -15,7 +15,7 @@ export class ApiKeyGuard implements CanActivate {
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request: Request = context.switchToHttp().getRequest();
-    const rawApiKey = extractApiKey(request);
+    const rawApiKey: string = extractApiKey(request);
 
     const endpointKey = this.reflector.getAllAndOverride<string>(EndpointKey, [context.getHandler(), context.getClass()]);
     const requiredPermissions = await this.authClient.getEndpointPermissions(endpointKey, request);
