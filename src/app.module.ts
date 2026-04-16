@@ -22,18 +22,6 @@ import { PrismaModule } from 'src/common/prisma/prisma.module';
       validate,
     }),
 
-    //TypeOrm Module
-    // TypeOrmModule.forRootAsync({
-    //   imports: [ConfigModule],
-    //   inject: [ConfigService],
-    //   useFactory: (configService: ConfigService) => ({
-    //     type: 'postgres',
-    //     url: configService.get<string>('DATABASE_HOST'),
-    //     entities: [...ENTITIES],
-    //     synchronize: true,
-    //   }),
-    // }),
-
     //Winston Logger Module
     WinstonModule.forRoot({
       level: 'info',
@@ -60,7 +48,6 @@ import { PrismaModule } from 'src/common/prisma/prisma.module';
       ],
     }),
 
-    //TypeOrmModule.forFeature(ENTITIES),
     PrismaModule,
     AuthClientModule,
     RequestContextModule,
