@@ -1,9 +1,7 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { ENTITIES } from 'src/entities';
+import { ConfigModule } from '@nestjs/config';
 import { validate } from 'src/config/env-validation';
 import winston from 'winston';
 import DailyRotateFile from 'winston-daily-rotate-file';
@@ -14,6 +12,7 @@ import { AllExceptionsFilter } from 'src/common/filters/all-exceptions.filter';
 import { ObservabilityModule } from 'src/observability/observability.module';
 import { AuthGuard } from 'src/common/guards/auth.guard';
 import { ApiKeyGuard } from 'src/common/guards/api-key.guard';
+import { PrismaModule } from 'src/prisma/prisma.module';
 
 @Module({
   imports: [
@@ -24,16 +23,16 @@ import { ApiKeyGuard } from 'src/common/guards/api-key.guard';
     }),
 
     //TypeOrm Module
-    TypeOrmModule.forRootAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
-        type: 'postgres',
-        url: configService.get<string>('DATABASE_HOST'),
-        entities: [...ENTITIES],
-        synchronize: true,
-      }),
-    }),
+    // TypeOrmModule.forRootAsync({
+    //   imports: [ConfigModule],
+    //   inject: [ConfigService],
+    //   useFactory: (configService: ConfigService) => ({
+    //     type: 'postgres',
+    //     url: configService.get<string>('DATABASE_HOST'),
+    //     entities: [...ENTITIES],
+    //     synchronize: true,
+    //   }),
+    // }),
 
     //Winston Logger Module
     WinstonModule.forRoot({
@@ -61,7 +60,8 @@ import { ApiKeyGuard } from 'src/common/guards/api-key.guard';
       ],
     }),
 
-    TypeOrmModule.forFeature(ENTITIES),
+    //TypeOrmModule.forFeature(ENTITIES),
+    PrismaModule,
     AuthClientModule,
     RequestContextModule,
     ObservabilityModule,
