@@ -1,0 +1,190 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ---------------------------------------------------------------------------
+// Enums
+// ---------------------------------------------------------------------------
+
+enum OutboxStatus {
+  PENDING
+  PROCESSING
+  SENT
+  FAILED
+}
+
+enum CategoryType {
+  GENERAL
+  CONTACT
+  BILLING
+  COVERAGE
+  GUARDIAN
+  WARNING
+}
+
+enum AffiliateType {
+  HOLDER
+  MEMBER
+  FAMILY_GROUP
+  INDIVIDUAL
+}
+
+enum RelationshipType {
+  SON
+  DAUGHTER
+  MOTHER
+  FATHER
+  SIBLING
+  SPOUSE
+  TUTOR
+  CAREGIVER
+  LEGAL_GUARDIAN
+  OTHER
+}
+
+// ---------------------------------------------------------------------------
+// Models
+// ---------------------------------------------------------------------------
+
+/// Maps to the `coverage_provider` table.
+model CoverageProvider {
+  id            String   @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  provider_name String   @unique(map: "UQ_coverage_provider_provider_name")
+  is_active     Boolean  @default(true)
+  created_at    DateTime @default(now())
+  created_by    Json?
+  updated_at    DateTime @updatedAt
+  updated_by    Json?
+
+  provider_plans    ProviderPlan[]
+  patient_coverages PatientCoverage[]
+
+  @@map("coverage_provider")
+}
+
+/// Maps to the `outbox` table.
+model Outbox {
+  id          String       @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  destination String
+  pattern     String
+  payload     Json
+  status      OutboxStatus @default(PENDING)
+  retry_count Int          @default(0)
+  last_error  String?
+  claimed_at  DateTime?    @db.Timestamptz
+  created_at  DateTime     @default(now())
+
+  @@index([status], map: "idx_outbox_sent_cleanup")
+  @@map("outbox")
+}
+
+/// Maps to the `patient` table.
+model Patient {
+  id                    String   @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  person_id             String   @unique(map: "UQ_patient_person_id") @db.Uuid
+  medical_record_number String   @unique(map: "UQ_patient_medical_record_number")
+  is_active             Boolean  @default(true)
+  created_at            DateTime @default(now())
+  created_by            Json?
+  updated_at            DateTime @updatedAt
+  updated_by            Json?
+
+  coverages            PatientCoverage[]
+  related_contacts     PatientRelatedContact[]
+  administrative_notes PatientAdministrativeNote[]
+
+  @@index([person_id], map: "IDX_patient_person_id")
+  @@index([medical_record_number], map: "IDX_patient_medical_record_number")
+  @@map("patient")
+}
+
+/// Maps to the `patient_administrative_note` table.
+model PatientAdministrativeNote {
+  id         String       @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  patient_id String       @db.Uuid
+  note       String       @db.VarChar(500)
+  category   CategoryType
+  is_active  Boolean      @default(true)
+  created_at DateTime     @default(now())
+  created_by Json?
+  updated_at DateTime     @updatedAt
+  updated_by Json?
+
+  patient Patient @relation(fields: [patient_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@map("patient_administrative_note")
+}
+
+/// Maps to the `patient_coverage` table.
+model PatientCoverage {
+  id                   String            @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  patient_id           String            @db.Uuid
+  coverage_provider_id String            @db.Uuid
+  provider_plan_id     String            @db.Uuid
+  member_number        String
+  is_active            Boolean           @default(true)
+  valid_from           DateTime          @db.Date
+  valid_until          DateTime?         @db.Date
+  notes                String?           @db.VarChar(250)
+  affiliate_type       AffiliateType
+  relationship_type    RelationshipType?
+  created_at           DateTime          @default(now())
+  created_by           Json?
+  updated_at           DateTime          @updatedAt
+  updated_by           Json?
+
+  patient           Patient          @relation(fields: [patient_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  coverage_provider CoverageProvider @relation(fields: [coverage_provider_id], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  provider_plan     ProviderPlan     @relation(fields: [provider_plan_id], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  @@map("patient_coverage")
+}
+
+/// Maps to the `patient_related_contact` table.
+model PatientRelatedContact {
+  id                   String           @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  patient_id           String           @db.Uuid
+  full_name            String           @db.VarChar(100)
+  phone                String
+  email                String?
+  relationship_type    RelationshipType
+  is_emergency_contact Boolean          @default(false)
+  is_default_contact   Boolean          @default(false)
+  is_active            Boolean          @default(true)
+  note                 String?          @db.VarChar(200)
+  created_at           DateTime         @default(now())
+  created_by           Json?
+  updated_at           DateTime         @updatedAt
+  updated_by           Json?
+
+  patient Patient @relation(fields: [patient_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@map("patient_related_contact")
+}
+
+/// Maps to the `provider_plan` table.
+model ProviderPlan {
+  id                   String   @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  plan_name            String
+  plan_code            String?
+  is_active            Boolean  @default(true)
+  coverage_provider_id String   @db.Uuid
+  created_at           DateTime @default(now())
+  created_by           Json?
+  updated_at           DateTime @updatedAt
+  updated_by           Json?
+
+  coverage_provider CoverageProvider  @relation(fields: [coverage_provider_id], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  patient_coverages PatientCoverage[]
+
+  @@unique([coverage_provider_id, plan_name], map: "UQ_provider_plan_name")
+  @@unique([coverage_provider_id, plan_code], map: "UQ_provider_plan_code")
+  @@map("provider_plan")
+}
