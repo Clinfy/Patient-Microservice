@@ -5,6 +5,10 @@ class EnvironmentVariables {
   @IsString()
   @IsNotEmpty()
   DATABASE_HOST: string;
+
+  @IsString()
+  @IsNotEmpty()
+  RABBITMQ_URL: string;
 }
 
 export function validate(config: Record<string, unknown>) {
