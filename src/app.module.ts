@@ -13,6 +13,8 @@ import { ObservabilityModule } from 'src/observability/observability.module';
 import { AuthGuard } from 'src/common/guards/auth.guard';
 import { ApiKeyGuard } from 'src/common/guards/api-key.guard';
 import { PrismaModule } from 'src/common/prisma/prisma.module';
+import { ScheduleModule } from '@nestjs/schedule';
+import { CronModule } from 'src/cron/cron.module';
 
 @Module({
   imports: [
@@ -48,10 +50,12 @@ import { PrismaModule } from 'src/common/prisma/prisma.module';
       ],
     }),
 
+    ScheduleModule.forRoot(),
     PrismaModule,
     AuthClientModule,
     RequestContextModule,
     ObservabilityModule,
+    CronModule,
   ],
   controllers: [AppController],
   providers: [AppService, AllExceptionsFilter, AuthGuard, ApiKeyGuard],
