@@ -12,7 +12,7 @@ import { AllExceptionsFilter } from 'src/common/filters/all-exceptions.filter';
 import { ObservabilityModule } from 'src/observability/observability.module';
 import { AuthGuard } from 'src/common/guards/auth.guard';
 import { ApiKeyGuard } from 'src/common/guards/api-key.guard';
-import { PrismaModule } from 'src/prisma/prisma.module';
+import { PrismaModule } from 'src/common/prisma/prisma.module';
 
 @Module({
   imports: [
