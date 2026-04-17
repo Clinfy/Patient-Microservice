@@ -15,6 +15,8 @@ import { ApiKeyGuard } from 'src/common/guards/api-key.guard';
 import { PrismaModule } from 'src/common/prisma/prisma.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { CronModule } from 'src/cron/cron.module';
+import { CoverageProviderModule } from 'src/services/coverage-provider/coverage-provider.module';
+import { ValidatorsModule } from 'src/common/validators/validators.module';
 
 @Module({
   imports: [
@@ -56,6 +58,8 @@ import { CronModule } from 'src/cron/cron.module';
     RequestContextModule,
     ObservabilityModule,
     CronModule,
+    ValidatorsModule,
+    CoverageProviderModule,
   ],
   controllers: [AppController],
   providers: [AppService, AllExceptionsFilter, AuthGuard, ApiKeyGuard],
