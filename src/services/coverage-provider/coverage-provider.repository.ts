@@ -8,7 +8,21 @@ export class CoverageProviderRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   async save(data: Prisma.CoverageProviderCreateInput): Promise<CoverageProvider> {
-    return this.prisma.coverageProvider.create({ data });
+    const saved: CoverageProvider = await this.prisma.coverageProvider.create({ data });
+    await this.prisma.outbox.create({
+      data: {
+        pattern: 'coverage_created',
+        destination: 'audit_queue',
+        payload: {
+          action: 'COVERAGE_PROVIDER_CREATED',
+          entity: 'coverage_provider',
+          coverageProviderId: saved.id,
+          done_by: saved.created_by ?? null,
+          timestamp: new Date().toISOString(),
+        },
+      },
+    });
+    return saved;
   }
 
   async update(id: string, data: Prisma.CoverageProviderUpdateInput): Promise<CoverageProvider> {
