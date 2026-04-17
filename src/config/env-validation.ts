@@ -1,5 +1,5 @@
 import { plainToInstance } from 'class-transformer';
-import { IsNotEmpty, IsString, validateSync } from 'class-validator';
+import { IsNotEmpty, IsString, IsUrl, validateSync } from 'class-validator';
 
 class EnvironmentVariables {
   @IsString()
@@ -9,6 +9,15 @@ class EnvironmentVariables {
   @IsString()
   @IsNotEmpty()
   RABBITMQ_URL: string;
+
+  @IsString()
+  @IsUrl()
+  @IsNotEmpty()
+  AUTH_SERVICE_URL: string;
+
+  @IsString()
+  @IsNotEmpty()
+  AUTH_SERVICE_API_KEY: string;
 }
 
 export function validate(config: Record<string, unknown>) {
