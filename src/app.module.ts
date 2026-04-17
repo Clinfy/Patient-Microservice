@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
@@ -17,6 +17,7 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { CronModule } from 'src/cron/cron.module';
 import { CoverageProviderModule } from 'src/services/coverage-provider/coverage-provider.module';
 import { ValidatorsModule } from 'src/common/validators/validators.module';
+import { RequestContextMiddleware } from 'src/middlewares/request-context.middleware';
 
 @Module({
   imports: [
@@ -64,4 +65,8 @@ import { ValidatorsModule } from 'src/common/validators/validators.module';
   controllers: [AppController],
   providers: [AppService, AllExceptionsFilter, AuthGuard, ApiKeyGuard],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(RequestContextMiddleware).forRoutes('*');
+  }
+}
