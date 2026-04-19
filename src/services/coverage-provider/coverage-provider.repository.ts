@@ -68,7 +68,7 @@ export class CoverageProviderRepository {
   }
 
   async findOneById(id: string): Promise<CoverageProvider | null> {
-    return this.prisma.coverageProvider.findUnique({ where: { id } });
+    return this.prisma.coverageProvider.findUnique({ where: { id }, include: { provider_plans: true } });
   }
 
   async findAll(query: PaginationQueryDto): Promise<PaginatedResponseDto<CoverageProvider>> {
