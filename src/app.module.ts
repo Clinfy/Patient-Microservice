@@ -18,6 +18,7 @@ import { CronModule } from 'src/cron/cron.module';
 import { CoverageProviderModule } from 'src/services/coverage-provider/coverage-provider.module';
 import { ValidatorsModule } from 'src/common/validators/validators.module';
 import { RequestContextMiddleware } from 'src/middlewares/request-context.middleware';
+import { ProviderPlanModule } from 'src/services/provider-plan/provider-plan.module';
 
 @Module({
   imports: [
@@ -61,6 +62,7 @@ import { RequestContextMiddleware } from 'src/middlewares/request-context.middle
     CronModule,
     ValidatorsModule,
     CoverageProviderModule,
+    ProviderPlanModule,
   ],
   controllers: [AppController],
   providers: [AppService, AllExceptionsFilter, AuthGuard, ApiKeyGuard],
