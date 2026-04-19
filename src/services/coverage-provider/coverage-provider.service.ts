@@ -52,26 +52,62 @@ export class CoverageProviderService {
   }
 
   async delete(id: string): Promise<{ message: string }> {
-    const provider = await this.coverageProviderRepository.delete(id);
-    return { message: `Coverage provider ${provider.provider_name} deleted successfully` };
+    try {
+      const provider = await this.coverageProviderRepository.delete(id);
+      return { message: `Coverage provider ${provider.provider_name} deleted successfully` };
+    } catch (error) {
+      throw new CoverageProviderException(
+        'Failed to delete coverage provider',
+        CoverageProviderErrorCodes.COVERAGE_PROVIDER_DELETION_FAILED,
+        getErrorStatus(error),
+        getSafeError(error),
+      );
+    }
   }
 
   async deactivateCoverage(id: string): Promise<CoverageProvider> {
-    return this.coverageProviderRepository.update(id, {
-      is_active: false,
-      updated_by: toPrismaJsonUser(this.contextService.getCurrentUser()),
-    });
+    try {
+      return this.coverageProviderRepository.update(id, {
+        is_active: false,
+        updated_by: toPrismaJsonUser(this.contextService.getCurrentUser()),
+      });
+    } catch (error) {
+      throw new CoverageProviderException(
+        'Failed to deactivate coverage provider',
+        CoverageProviderErrorCodes.COVERAGE_PROVIDER_UPDATE_FAILED,
+        getErrorStatus(error),
+        getSafeError(error),
+      );
+    }
   }
 
   async activateCoverage(id: string): Promise<CoverageProvider> {
-    return this.coverageProviderRepository.update(id, {
-      is_active: true,
-      updated_by: toPrismaJsonUser(this.contextService.getCurrentUser()),
-    });
+    try {
+      return this.coverageProviderRepository.update(id, {
+        is_active: true,
+        updated_by: toPrismaJsonUser(this.contextService.getCurrentUser()),
+      });
+    } catch (error) {
+      throw new CoverageProviderException(
+        'Failed to activate coverage provider',
+        CoverageProviderErrorCodes.COVERAGE_PROVIDER_UPDATE_FAILED,
+        getErrorStatus(error),
+        getSafeError(error),
+      );
+    }
   }
 
   async findAllForDetails(): Promise<ICoverageProvider[]> {
-    return this.coverageProviderRepository.findAllForDetails();
+    try {
+      return await this.coverageProviderRepository.findAllForDetails();
+    } catch (error) {
+      throw new CoverageProviderException(
+        'Failed to search coverage providers details',
+        CoverageProviderErrorCodes.COVERAGE_PROVIDER_SEARCH_FAILED,
+        getErrorStatus(error),
+        getSafeError(error),
+      );
+    }
   }
 
   async findOneById(id: string): Promise<CoverageProvider> {
@@ -86,6 +122,15 @@ export class CoverageProviderService {
   }
 
   async findAll(query: PaginationQueryDto = new PaginationQueryDto()): Promise<PaginatedResponseDto<CoverageProvider>> {
-    return this.coverageProviderRepository.findAll(query);
+    try {
+      return await this.coverageProviderRepository.findAll(query);
+    } catch (error) {
+      throw new CoverageProviderException(
+        'Failed to search coverage providers',
+        CoverageProviderErrorCodes.COVERAGE_PROVIDER_SEARCH_FAILED,
+        getErrorStatus(error),
+        getSafeError(error),
+      );
+    }
   }
 }
