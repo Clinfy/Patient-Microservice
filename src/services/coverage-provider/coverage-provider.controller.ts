@@ -1,10 +1,11 @@
-import { Body, Controller, Get, Param, ParseUUIDPipe, Post, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, ParseUUIDPipe, Patch, Post, Query, UseGuards } from '@nestjs/common';
 import { CoverageProvider } from 'generated/prisma/client';
 import { CoverageProviderService } from 'src/services/coverage-provider/coverage-provider.service';
 import { CreateCoverageProviderDto } from 'src/interfaces/dto/coverage-provider.dto';
 import { PaginatedResponseDto, PaginationQueryDto } from 'src/interfaces/dto/pagination.dto';
 import { AuthGuard } from 'src/common/guards/auth.guard';
 import { EndpointKey } from 'src/common/decorators/endpoint-key.decorator';
+import { ICoverageProvider } from 'src/interfaces/coverage-provider.interface';
 
 @Controller('coverage-provider')
 export class CoverageProviderController {
@@ -15,6 +16,34 @@ export class CoverageProviderController {
   @Post('new')
   create(@Body() dto: CreateCoverageProviderDto): Promise<CoverageProvider> {
     return this.coverageProviderService.create(dto);
+  }
+
+  @UseGuards(AuthGuard)
+  @EndpointKey('coverage_provider.update')
+  @Patch('update/:id')
+  update(@Param('id', ParseUUIDPipe) id: string, @Body() dto: CreateCoverageProviderDto): Promise<CoverageProvider> {
+    return this.coverageProviderService.update(id, dto);
+  }
+
+  @UseGuards(AuthGuard)
+  @EndpointKey('coverage_provider.update')
+  @Patch('deactivate/:id')
+  deactivateCoverage(@Param('id', ParseUUIDPipe) id: string): Promise<CoverageProvider> {
+    return this.coverageProviderService.deactivateCoverage(id);
+  }
+
+  @UseGuards(AuthGuard)
+  @EndpointKey('coverage_provider.update')
+  @Patch('activate/:id')
+  activateCoverage(@Param('id', ParseUUIDPipe) id: string): Promise<CoverageProvider> {
+    return this.coverageProviderService.activateCoverage(id);
+  }
+
+  @UseGuards(AuthGuard)
+  @EndpointKey('coverage_provider.details')
+  @Get('details')
+  findAllForDetails(): Promise<ICoverageProvider[]> {
+    return this.coverageProviderService.findAllForDetails();
   }
 
   @UseGuards(AuthGuard)
