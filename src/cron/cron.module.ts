@@ -3,6 +3,7 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { OutboxPublisherService } from 'src/cron/outbox-publisher.service';
 import { OutboxCleanupService } from 'src/cron/outbox-cleanup.service';
+import { OutboxSubscriberService } from 'src/cron/outbox.subscriber.service';
 
 @Global()
 @Module({
@@ -26,7 +27,7 @@ import { OutboxCleanupService } from 'src/cron/outbox-cleanup.service';
       },
     ]),
   ],
-  providers: [OutboxPublisherService, OutboxCleanupService],
-  exports: [OutboxPublisherService, OutboxCleanupService],
+  providers: [OutboxSubscriberService, OutboxPublisherService, OutboxCleanupService],
+  exports: [OutboxSubscriberService, OutboxPublisherService, OutboxCleanupService],
 })
 export class CronModule {}
