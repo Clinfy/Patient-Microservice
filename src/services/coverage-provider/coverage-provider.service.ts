@@ -10,6 +10,7 @@ import {
 } from 'src/services/coverage-provider/coverage-provider.exception';
 import { PaginatedResponseDto, PaginationQueryDto } from 'src/interfaces/dto/pagination.dto';
 import { ICoverageProvider } from 'src/interfaces/coverage-provider.interface';
+import { getErrorStatus, getSafeError } from 'src/common/utils/get-safe-error.util';
 
 @Injectable()
 export class CoverageProviderService {
@@ -19,17 +20,35 @@ export class CoverageProviderService {
   ) {}
 
   async create(dto: CreateCoverageProviderDto): Promise<CoverageProvider> {
-    return this.coverageProviderRepository.save({
-      ...dto,
-      created_by: toPrismaJsonUser(this.contextService.getCurrentUser()),
-    });
+    try {
+      return this.coverageProviderRepository.save({
+        ...dto,
+        created_by: toPrismaJsonUser(this.contextService.getCurrentUser()),
+      });
+    } catch (error) {
+      throw new CoverageProviderException(
+        'Failed to create coverage provider',
+        CoverageProviderErrorCodes.COVERAGE_PROVIDER_CREATION_FAILED,
+        getErrorStatus(error),
+        getSafeError(error),
+      );
+    }
   }
 
   async update(id: string, dto: CreateCoverageProviderDto): Promise<CoverageProvider> {
-    return this.coverageProviderRepository.update(id, {
-      ...dto,
-      updated_by: toPrismaJsonUser(this.contextService.getCurrentUser()),
-    });
+    try {
+      return this.coverageProviderRepository.update(id, {
+        ...dto,
+        updated_by: toPrismaJsonUser(this.contextService.getCurrentUser()),
+      });
+    } catch (error) {
+      throw new CoverageProviderException(
+        'Failed to update coverage provider',
+        CoverageProviderErrorCodes.COVERAGE_PROVIDER_UPDATE_FAILED,
+        getErrorStatus(error),
+        getSafeError(error),
+      );
+    }
   }
 
   async delete(id: string): Promise<{ message: string }> {

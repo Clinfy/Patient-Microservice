@@ -4,6 +4,8 @@ import { BaseServiceException } from 'src/common/exceptions/base-service.excepti
 export enum CoverageProviderErrorCodes {
   COVERAGE_PROVIDER_NOT_FOUND = 'COVERAGE_PROVIDER_NOT_FOUND',
   COVERAGE_PROVIDER_NAME_ALREADY_EXISTS = 'COVERAGE_PROVIDER_NAME_ALREADY_EXISTS',
+  COVERAGE_PROVIDER_CREATION_FAILED = 'COVERAGE_PROVIDER_CREATION_FAILED',
+  COVERAGE_PROVIDER_UPDATE_FAILED = 'COVERAGE_PROVIDER_UPDATE_FAILED',
 }
 
 export class CoverageProviderException extends BaseServiceException {
