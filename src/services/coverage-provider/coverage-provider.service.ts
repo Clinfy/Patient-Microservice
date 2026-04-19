@@ -3,7 +3,7 @@ import { CoverageProviderRepository } from 'src/services/coverage-provider/cover
 import { CoverageProvider } from 'generated/prisma/client';
 import { CreateCoverageProviderDto } from 'src/interfaces/dto/coverage-provider.dto';
 import { RequestContextService } from 'src/common/context/request-context.service';
-import { toPrismaJsonUser } from 'src/common/mapper/auth-user-mapper.util';
+import { toPrismaJsonUser } from 'src/common/mappers/auth-user.mapper';
 import {
   CoverageProviderErrorCodes,
   CoverageProviderException,
