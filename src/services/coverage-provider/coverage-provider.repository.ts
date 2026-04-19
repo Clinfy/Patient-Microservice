@@ -2,27 +2,29 @@ import { PrismaService } from 'src/common/prisma/prisma.service';
 import { Prisma, CoverageProvider } from 'generated/prisma/client';
 import { Injectable } from '@nestjs/common';
 import { PaginatedResponseDto, PaginationQueryDto } from 'src/interfaces/dto/pagination.dto';
+import { ICoverageProvider } from 'src/interfaces/coverage-provider.interface';
+import { OutboxSubscriberService } from 'src/cron/outbox.subscriber.service';
 
 @Injectable()
 export class CoverageProviderRepository {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly outboxSubscriberService: OutboxSubscriberService,
+  ) {}
 
   async save(data: Prisma.CoverageProviderCreateInput): Promise<CoverageProvider> {
-    const saved: CoverageProvider = await this.prisma.coverageProvider.create({ data });
-    await this.prisma.outbox.create({
-      data: {
+    return this.prisma.$transaction(async (tx) => {
+      const coverageProvider = await tx.coverageProvider.create({ data });
+      await this.outboxSubscriberService.handleOutboxEvent({
+        tx,
         pattern: 'coverage_created',
-        destination: 'audit_queue',
-        payload: {
-          action: 'COVERAGE_PROVIDER_CREATED',
-          entity: 'coverage_provider',
-          coverageProviderId: saved.id,
-          done_by: saved.created_by ?? null,
-          timestamp: new Date().toISOString(),
-        },
-      },
+        action: 'COVERAGE_PROVIDER_CREATED',
+        entity: 'coverage_provider',
+        entity_id: coverageProvider.id,
+        done_by: coverageProvider.created_by,
+      });
+      return coverageProvider;
     });
-    return saved;
   }
 
   async update(id: string, data: Prisma.CoverageProviderUpdateInput): Promise<CoverageProvider> {
@@ -31,6 +33,14 @@ export class CoverageProviderRepository {
 
   async delete(id: string): Promise<CoverageProvider> {
     return this.prisma.coverageProvider.delete({ where: { id } });
+  }
+
+  async findAllForDetails(): Promise<ICoverageProvider[]> {
+    return this.prisma.coverageProvider.findMany({
+      where: { is_active: true },
+      select: { id: true, provider_name: true },
+      orderBy: { provider_name: 'asc' },
+    });
   }
 
   async findOneById(id: string): Promise<CoverageProvider | null> {
