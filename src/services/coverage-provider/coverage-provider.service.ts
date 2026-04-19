@@ -65,6 +65,10 @@ export class CoverageProviderService {
     }
   }
 
+  async exists(id: string): Promise<boolean> {
+    return await this.coverageProviderRepository.exists(id);
+  }
+
   async deactivateCoverage(id: string): Promise<CoverageProvider> {
     try {
       return this.coverageProviderRepository.update(id, {

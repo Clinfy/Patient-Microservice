@@ -59,6 +59,10 @@ export class CoverageProviderRepository {
     });
   }
 
+  async exists(id: string): Promise<boolean> {
+    return (await this.prisma.coverageProvider.count({ where: { id } })) > 0;
+  }
+
   async findAllForDetails(): Promise<ICoverageProvider[]> {
     return this.prisma.coverageProvider.findMany({
       where: { is_active: true },
