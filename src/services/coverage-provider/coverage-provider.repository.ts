@@ -15,24 +15,49 @@ export class CoverageProviderRepository {
   async save(data: Prisma.CoverageProviderCreateInput): Promise<CoverageProvider> {
     return this.prisma.$transaction(async (tx) => {
       const coverageProvider = await tx.coverageProvider.create({ data });
+
       await this.outboxSubscriberService.handleOutboxEvent({
-        tx,
-        pattern: 'coverage_created',
-        action: 'COVERAGE_PROVIDER_CREATED',
+        tx: tx,
+        pattern: 'entity_created',
         entity: 'coverage_provider',
         entity_id: coverageProvider.id,
         done_by: coverageProvider.created_by,
       });
+
       return coverageProvider;
     });
   }
 
   async update(id: string, data: Prisma.CoverageProviderUpdateInput): Promise<CoverageProvider> {
-    return this.prisma.coverageProvider.update({ where: { id }, data });
+    return this.prisma.$transaction(async (tx) => {
+      const coverageProvider = await tx.coverageProvider.update({ where: { id }, data });
+
+      await this.outboxSubscriberService.handleOutboxEvent({
+        tx: tx,
+        pattern: 'entity_updated',
+        entity: 'coverage_provider',
+        entity_id: coverageProvider.id,
+        done_by: coverageProvider.updated_by,
+      });
+
+      return coverageProvider;
+    });
   }
 
   async delete(id: string): Promise<CoverageProvider> {
-    return this.prisma.coverageProvider.delete({ where: { id } });
+    return this.prisma.$transaction(async (tx) => {
+      const coverageProvider = await tx.coverageProvider.delete({ where: { id } });
+
+      await this.outboxSubscriberService.handleOutboxEvent({
+        tx: tx,
+        pattern: 'entity_deleted',
+        entity: 'coverage_provider',
+        entity_id: coverageProvider.id,
+        done_by: coverageProvider.updated_by,
+      });
+
+      return coverageProvider;
+    });
   }
 
   async findAllForDetails(): Promise<ICoverageProvider[]> {
