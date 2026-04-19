@@ -53,7 +53,6 @@ export class CoverageProviderRepository {
         pattern: 'entity_deleted',
         entity: 'coverage_provider',
         entity_id: coverageProvider.id,
-        done_by: coverageProvider.updated_by,
       });
 
       return coverageProvider;
