@@ -71,6 +71,54 @@ export class ProviderPlanService {
     }
   }
 
+  async activatePlan(id: string): Promise<{ message: string }> {
+    if (!(await this.exists(id))) {
+      throw new ProviderPlanException(
+        `Provider plan with id ${id} not found`,
+        ProviderPlanErrorCodes.PROVIDER_PLAN_NOT_FOUND,
+        HttpStatus.NOT_FOUND,
+      );
+    }
+    try {
+      const plan = await this.providerPlanRepository.update(id, {
+        is_active: true,
+        updated_by: toPrismaJsonUser(this.contextService.getCurrentUser()),
+      });
+      return { message: `Provider plan with id ${plan.id} activated successfully` };
+    } catch (error) {
+      throw new ProviderPlanException(
+        'Failed to activate provider plan',
+        ProviderPlanErrorCodes.PROVIDER_PLAN_ACTIVATION_FAILED,
+        getErrorStatus(error),
+        getSafeError(error),
+      );
+    }
+  }
+
+  async deactivatePlan(id: string): Promise<{ message: string }> {
+    if (!(await this.exists(id))) {
+      throw new ProviderPlanException(
+        `Provider plan with id ${id} not found`,
+        ProviderPlanErrorCodes.PROVIDER_PLAN_NOT_FOUND,
+        HttpStatus.NOT_FOUND,
+      );
+    }
+    try {
+      const plan = await this.providerPlanRepository.update(id, {
+        is_active: false,
+        updated_by: toPrismaJsonUser(this.contextService.getCurrentUser()),
+      });
+      return { message: `Provider plan with id ${plan.id} deactivated successfully` };
+    } catch (error) {
+      throw new ProviderPlanException(
+        'Failed to deactivate provider plan',
+        ProviderPlanErrorCodes.PROVIDER_PLAN_DEACTIVATION_FAILED,
+        getErrorStatus(error),
+        getSafeError(error),
+      );
+    }
+  }
+
   async delete(id: string): Promise<{ message: string }> {
     if (!(await this.exists(id))) {
       throw new ProviderPlanException(
