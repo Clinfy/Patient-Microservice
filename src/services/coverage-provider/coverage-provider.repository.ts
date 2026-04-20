@@ -63,6 +63,14 @@ export class CoverageProviderRepository {
     return (await this.prisma.coverageProvider.count({ where: { id } })) > 0;
   }
 
+  async hasProviderPlans(id: string): Promise<boolean> {
+    const provider = await this.prisma.coverageProvider.findUnique({
+      where: { id },
+      select: { provider_plans: { select: { id: true }, take: 1 } },
+    });
+    return !!provider && provider.provider_plans.length > 0;
+  }
+
   async findAllForDetails(): Promise<ICoverageProvider[]> {
     return this.prisma.coverageProvider.findMany({
       where: { is_active: true },
