@@ -36,6 +36,13 @@ export class CoverageProviderService {
   }
 
   async update(id: string, dto: CreateCoverageProviderDto): Promise<CoverageProvider> {
+    if (!(await this.exists(id))) {
+      throw new CoverageProviderException(
+        `Coverage provider with id ${id} not found`,
+        CoverageProviderErrorCodes.COVERAGE_PROVIDER_NOT_FOUND,
+        HttpStatus.NOT_FOUND,
+      );
+    }
     try {
       return this.coverageProviderRepository.update(id, {
         ...dto,
@@ -85,6 +92,13 @@ export class CoverageProviderService {
   }
 
   async deactivateCoverage(id: string): Promise<{ message: string }> {
+    if (!(await this.exists(id))) {
+      throw new CoverageProviderException(
+        `Coverage provider with id ${id} not found`,
+        CoverageProviderErrorCodes.COVERAGE_PROVIDER_NOT_FOUND,
+        HttpStatus.NOT_FOUND,
+      );
+    }
     try {
       const provider = await this.coverageProviderRepository.update(id, {
         is_active: false,
@@ -103,6 +117,13 @@ export class CoverageProviderService {
   }
 
   async activateCoverage(id: string): Promise<{ message: string }> {
+    if (!(await this.exists(id))) {
+      throw new CoverageProviderException(
+        `Coverage provider with id ${id} not found`,
+        CoverageProviderErrorCodes.COVERAGE_PROVIDER_NOT_FOUND,
+        HttpStatus.NOT_FOUND,
+      );
+    }
     try {
       const provider = await this.coverageProviderRepository.update(id, {
         is_active: true,
