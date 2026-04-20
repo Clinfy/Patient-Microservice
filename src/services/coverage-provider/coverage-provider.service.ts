@@ -52,6 +52,13 @@ export class CoverageProviderService {
   }
 
   async delete(id: string): Promise<{ message: string }> {
+    if (!(await this.exists(id))) {
+      throw new CoverageProviderException(
+        `Coverage provider with id ${id} not found`,
+        CoverageProviderErrorCodes.COVERAGE_PROVIDER_NOT_FOUND,
+        HttpStatus.NOT_FOUND,
+      );
+    }
     if (await this.coverageProviderRepository.hasProviderPlans(id)) {
       throw new CoverageProviderException(
         'Cannot delete coverage provider with associated plans',
