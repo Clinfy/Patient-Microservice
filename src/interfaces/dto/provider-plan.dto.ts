@@ -17,3 +17,15 @@ export class CreateProviderPlanDto {
   @IsNotEmpty({ message: 'Coverage provider id field is required' })
   coverage_provider_id: string;
 }
+
+export class UpdateProviderPlanDto {
+  @IsString({ message: 'Plan name must be a string' })
+  @IsOptional()
+  @IsUniqueProviderPlanName()
+  plan_name?: string;
+
+  @IsString({ message: 'Plan code must be a string' })
+  @IsOptional()
+  @IsUniqueProviderPlanCode()
+  plan_code?: string;
+}
