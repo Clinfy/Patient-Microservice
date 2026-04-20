@@ -69,12 +69,14 @@ export class CoverageProviderService {
     return await this.coverageProviderRepository.exists(id);
   }
 
-  async deactivateCoverage(id: string): Promise<CoverageProvider> {
+  async deactivateCoverage(id: string): Promise<{ message: string }> {
     try {
-      return this.coverageProviderRepository.update(id, {
+      const provider = await this.coverageProviderRepository.update(id, {
         is_active: false,
         updated_by: toPrismaJsonUser(this.contextService.getCurrentUser()),
       });
+
+      return { message: `Coverage provider ${provider.provider_name} deactivated successfully` };
     } catch (error) {
       throw new CoverageProviderException(
         'Failed to deactivate coverage provider',
@@ -85,12 +87,14 @@ export class CoverageProviderService {
     }
   }
 
-  async activateCoverage(id: string): Promise<CoverageProvider> {
+  async activateCoverage(id: string): Promise<{ message: string }> {
     try {
-      return this.coverageProviderRepository.update(id, {
+      const provider = await this.coverageProviderRepository.update(id, {
         is_active: true,
         updated_by: toPrismaJsonUser(this.contextService.getCurrentUser()),
       });
+
+      return { message: `Coverage provider ${provider.provider_name} activated successfully` };
     } catch (error) {
       throw new CoverageProviderException(
         'Failed to activate coverage provider',
