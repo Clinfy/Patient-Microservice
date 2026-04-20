@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, ParseUUIDPipe, Patch, Post, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Patch, Post, Query, UseGuards } from '@nestjs/common';
 import { CoverageProvider } from 'generated/prisma/client';
 import { CoverageProviderService } from 'src/services/coverage-provider/coverage-provider.service';
 import { CreateCoverageProviderDto } from 'src/interfaces/dto/coverage-provider.dto';
@@ -26,16 +26,23 @@ export class CoverageProviderController {
   }
 
   @UseGuards(AuthGuard)
+  @EndpointKey('coverage_provider.delete')
+  @Delete('delete/:id')
+  delete(@Param('id', ParseUUIDPipe) id: string): Promise<{ message: string }> {
+    return this.coverageProviderService.delete(id);
+  }
+
+  @UseGuards(AuthGuard)
   @EndpointKey('coverage_provider.update')
   @Patch('deactivate/:id')
-  deactivateCoverage(@Param('id', ParseUUIDPipe) id: string): Promise<CoverageProvider> {
+  deactivateCoverage(@Param('id', ParseUUIDPipe) id: string): Promise<{ message: string }> {
     return this.coverageProviderService.deactivateCoverage(id);
   }
 
   @UseGuards(AuthGuard)
   @EndpointKey('coverage_provider.update')
   @Patch('activate/:id')
-  activateCoverage(@Param('id', ParseUUIDPipe) id: string): Promise<CoverageProvider> {
+  activateCoverage(@Param('id', ParseUUIDPipe) id: string): Promise<{ message: string }> {
     return this.coverageProviderService.activateCoverage(id);
   }
 
