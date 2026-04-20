@@ -1,8 +1,10 @@
 import { IsNotEmpty, IsOptional, IsString, IsUUID } from 'class-validator';
+import { IsUniqueProviderPlanName } from 'src/common/validators/unique-provider_plan-name.validator';
 
 export class CreateProviderPlanDto {
   @IsString({ message: 'Plan name must be a string' })
   @IsNotEmpty({ message: 'Plan name field is required' })
+  @IsUniqueProviderPlanName()
   plan_name: string;
 
   @IsString({ message: 'Plan code must be a string' })
