@@ -6,5 +6,6 @@ import { CoverageProviderRepository } from 'src/services/coverage-provider/cover
 @Module({
   providers: [CoverageProviderService, CoverageProviderRepository],
   controllers: [CoverageProviderController],
+  exports: [CoverageProviderService],
 })
 export class CoverageProviderModule {}
