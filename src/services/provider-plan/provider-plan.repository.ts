@@ -60,6 +60,10 @@ export class ProviderPlanRepository {
     });
   }
 
+  async exists(id: string): Promise<boolean> {
+    return (await this.prisma.providerPlan.count({ where: { id } })) > 0;
+  }
+
   async findAllByProviderForDetails(providerId: string): Promise<IProviderPlan[]> {
     return this.prisma.providerPlan.findMany({
       where: { is_active: true, coverage_provider_id: providerId },
