@@ -7,10 +7,10 @@ import { IProviderPlan } from 'src/interfaces/provider-plan.interface';
 
 @Injectable()
 export class ProviderPlanRepository {
+  private readonly entity = 'provider_plan';
   constructor(
     private readonly prisma: PrismaService,
     private readonly outboxSubscriberService: OutboxSubscriberService,
-    private readonly entity: string = 'provider_plan',
   ) {}
 
   async save(data: Prisma.ProviderPlanCreateInput): Promise<ProviderPlan> {
