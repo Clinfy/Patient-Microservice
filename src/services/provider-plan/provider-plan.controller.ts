@@ -19,6 +19,16 @@ export class ProviderPlanController {
     return this.providerPlanService.update(id, dto);
   }
 
+  @Patch('activate/:id')
+  activatePlan(@Param('id', ParseUUIDPipe) id: string): Promise<{ message: string }> {
+    return this.providerPlanService.activatePlan(id);
+  }
+
+  @Patch('deactivate/:id')
+  deactivatePlan(@Param('id', ParseUUIDPipe) id: string): Promise<{ message: string }> {
+    return this.providerPlanService.deactivatePlan(id);
+  }
+
   @Delete('delete/:id')
   deleteProviderPlan(@Param('id', ParseUUIDPipe) id: string): Promise<{ message: string }> {
     return this.providerPlanService.delete(id);
