@@ -19,7 +19,8 @@ export class ProviderPlanService {
       throw new Error('Coverage provider not found');
     }
     return this.providerPlanRepository.save({
-      ...dto,
+      plan_name: dto.plan_name,
+      plan_code: dto.plan_code,
       coverage_provider: { connect: { id: dto.coverage_provider_id } },
       created_by: toPrismaJsonUser(this.contextService.getCurrentUser()),
     });
