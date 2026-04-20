@@ -52,6 +52,14 @@ export class CoverageProviderService {
   }
 
   async delete(id: string): Promise<{ message: string }> {
+    if (await this.coverageProviderRepository.hasProviderPlans(id)) {
+      throw new CoverageProviderException(
+        'Cannot delete coverage provider with associated plans',
+        CoverageProviderErrorCodes.COVERAGE_PROVIDER_IN_USE,
+        HttpStatus.CONFLICT,
+      );
+    }
+
     try {
       const provider = await this.coverageProviderRepository.delete(id);
       return { message: `Coverage provider ${provider.provider_name} deleted successfully` };
