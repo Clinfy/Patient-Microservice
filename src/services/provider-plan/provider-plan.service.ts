@@ -96,7 +96,7 @@ export class ProviderPlanService {
     return await this.providerPlanRepository.exists(id);
   }
 
-  async findAllByProviderForDetails(providerId: string): Promise<IProviderPlan[]> {
+  async findDetailsByProvider(providerId: string): Promise<IProviderPlan[]> {
     if (!(await this.coverageProviderService.exists(providerId))) {
       throw new CoverageProviderException(
         'Coverage provider not found',
