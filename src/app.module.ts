@@ -19,6 +19,8 @@ import { CoverageProviderModule } from 'src/services/coverage-provider/coverage-
 import { ValidatorsModule } from 'src/common/validators/validators.module';
 import { RequestContextMiddleware } from 'src/middlewares/request-context.middleware';
 import { ProviderPlanModule } from 'src/services/provider-plan/provider-plan.module';
+import { PatientModule } from 'src/services/patient/patient.module';
+import { RedisModule } from 'src/common/redis/redis.module';
 
 @Module({
   imports: [
@@ -56,6 +58,7 @@ import { ProviderPlanModule } from 'src/services/provider-plan/provider-plan.mod
 
     ScheduleModule.forRoot(),
     PrismaModule,
+    RedisModule,
     AuthClientModule,
     RequestContextModule,
     ObservabilityModule,
@@ -63,6 +66,7 @@ import { ProviderPlanModule } from 'src/services/provider-plan/provider-plan.mod
     ValidatorsModule,
     CoverageProviderModule,
     ProviderPlanModule,
+    PatientModule,
   ],
   controllers: [AppController],
   providers: [AppService, AllExceptionsFilter, AuthGuard, ApiKeyGuard],
