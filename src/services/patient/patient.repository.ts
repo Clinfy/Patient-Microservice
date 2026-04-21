@@ -13,7 +13,7 @@ export class PatientRepository {
   ) {}
 
   async save(data: Prisma.PatientCreateInput): Promise<Patient> {
-    return this.prisma.$transaction(async (tx) => {
+    return await this.prisma.$transaction(async (tx) => {
       const patient = await tx.patient.create({ data });
 
       await this.outboxSubscriberService.handleOutboxEvent({
@@ -26,5 +26,40 @@ export class PatientRepository {
 
       return patient;
     });
+  }
+
+  async update(id: string, data: Prisma.PatientUpdateInput): Promise<Patient> {
+    return await this.prisma.$transaction(async (tx) => {
+      const patient = await tx.patient.update({ where: { id }, data });
+
+      await this.outboxSubscriberService.handleOutboxEvent({
+        tx: tx,
+        pattern: 'entity_updated',
+        entity: this.entity,
+        entity_id: patient.id,
+        done_by: patient.updated_by,
+      });
+
+      return patient;
+    });
+  }
+
+  async delete(id: string): Promise<Patient> {
+    return await this.prisma.$transaction(async (tx) => {
+      const patient = await tx.patient.delete({ where: { id } });
+
+      await this.outboxSubscriberService.handleOutboxEvent({
+        tx: tx,
+        pattern: 'entity_deleted',
+        entity: this.entity,
+        entity_id: patient.id,
+      });
+
+      return patient;
+    });
+  }
+
+  async exists(id: string): Promise<boolean> {
+    return (await this.prisma.patient.count({ where: { id } })) > 0;
   }
 }
