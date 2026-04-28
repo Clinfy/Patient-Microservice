@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/common/prisma/prisma.service';
 import { Prisma, Patient } from 'generated/prisma/client';
 import { OutboxSubscriberService } from 'src/cron/outbox.subscriber.service';
+import { PaginatedResponseDto, PaginationQueryDto } from 'src/interfaces/dto/pagination.dto';
+import { IPatient } from 'src/interfaces/patient.interface';
 
 @Injectable()
 export class PatientRepository {
@@ -61,5 +63,19 @@ export class PatientRepository {
 
   async exists(id: string): Promise<boolean> {
     return (await this.prisma.patient.count({ where: { id } })) > 0;
+  }
+
+  async findAllForDetails(query: PaginationQueryDto): Promise<PaginatedResponseDto<IPatient>> {
+    const { page, limit } = query;
+    const [data, total] = await this.prisma.$transaction([
+      this.prisma.patient.findMany({
+        skip: (page - 1) * limit,
+        take: limit,
+        select: { id: true, person_id: true, medical_record_number: true },
+      }),
+      this.prisma.patient.count(),
+    ]);
+
+    return new PaginatedResponseDto(data, total, page, limit);
   }
 }
