@@ -1,8 +1,8 @@
 {
   "name": "patient-microservice",
   "version": "0.0.1",
-  "description": "",
-  "author": "",
+  "description": "microservice responsible for handling administrative information of the patients needed for handle the attention",
+  "author": "Agustín Liendo Ortiz",
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
