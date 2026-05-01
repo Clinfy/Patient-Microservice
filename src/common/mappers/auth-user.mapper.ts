@@ -1,4 +1,4 @@
-import { Prisma } from '../../../generated/prisma/client';
+import { Prisma } from 'generated/prisma/client';
 import { AuthUser } from 'src/clients/auth/auth-client.interface';
 
 export function toPrismaJsonUser(user: AuthUser | null): Prisma.InputJsonValue | typeof Prisma.DbNull {
